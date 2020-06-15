@@ -1,15 +1,9 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "StatueGameMode.h"
-#include "StatueCharacter.h"
-#include "UObject/ConstructorHelpers.h"
+#include "Players/PlayerCharacter.h"
 
 AStatueGameMode::AStatueGameMode()
 {
-	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPersonCPP/Blueprints/ThirdPersonCharacter"));
-	if (PlayerPawnBPClass.Class != NULL)
-	{
-		DefaultPawnClass = PlayerPawnBPClass.Class;
-	}
+	DefaultPawnClass = APlayerCharacter::StaticClass();
 }

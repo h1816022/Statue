@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
-class APlayerCamera;
+class ACamera;
 
 UCLASS()
 class STATUE_API APlayerCharacter : public ACharacter
@@ -37,5 +37,5 @@ private:
 	void LookUpAtRate(float Rate);
 
 	UPROPERTY()
-	APlayerCamera* Camera;
+	ACamera* Camera;
 };

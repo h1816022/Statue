@@ -2,7 +2,7 @@
 #include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
-#include "PlayerCamera.h"
+#include "Camera.h"
 #include "Kismet/GameplayStatics.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -31,12 +31,12 @@ void APlayerCharacter::BeginPlay()
 	FTransform SpawnTransform(FRotator(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f));
 
 	// カメラブループリントのクラスのパス
-	FString Path = "/Game/_Users/Players/Blueprints/BP_PlayerCamera.BP_PlayerCamera_C";
-	TSubclassOf<class APlayerCamera> Sc = TSoftClassPtr<APlayerCamera>(FSoftObjectPath(*Path)).LoadSynchronous();
+	FString Path = "/Game/_Users/Players/Blueprints/BP_Camera.BP_Camera_C";
+	TSubclassOf<class ACamera> Sc = TSoftClassPtr<ACamera>(FSoftObjectPath(*Path)).LoadSynchronous();
 	if (Sc != nullptr)
 	{
 		// 生成処理
-		Camera = Cast<APlayerCamera>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, Sc, SpawnTransform));
+		Camera = Cast<ACamera>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, Sc, SpawnTransform));
 
 		// コンストラクタの前に変数を書き換えるInit処理
 		Camera->Init(this);

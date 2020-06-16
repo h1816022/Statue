@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "PlayerCamera.generated.h"
+#include "Camera.generated.h"
 
 class UArrowComponent;
 class USpringArmComponent;
@@ -10,12 +10,12 @@ class UCameraComponent;
 class APlayerCharacter;
 
 UCLASS()
-class STATUE_API APlayerCamera : public AActor
+class STATUE_API ACamera : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	APlayerCamera();
+	ACamera();
 
 protected:
 	virtual void BeginPlay() override;
@@ -23,11 +23,10 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
-	//UFUNCTION()
-	//void Init(APlayerCharacter* inPlayer);
+	void Init(APlayerCharacter* inPlayer);
 
 private:
-	//void UpdateTransform();
+	void UpdateTransform();
 
 	UPROPERTY(VisibleAnywhere)
 	UArrowComponent* Arrow;
@@ -44,6 +43,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	float LagMaxDistance = 400.0f;
 
-	//UPROPERTY()
-	//APlayerCharacter* Player;
+	UPROPERTY()
+	APlayerCharacter* Player;
 };

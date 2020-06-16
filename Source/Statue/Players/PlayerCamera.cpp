@@ -7,7 +7,6 @@
 #include "PlayerCharacter.h"
 
 APlayerCamera::APlayerCamera()
-	:Player(Player)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -33,36 +32,36 @@ void APlayerCamera::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	UpdateTransform();
+	//UpdateTransform();
 }
 
-void APlayerCamera::Init(APlayerCharacter* inPlayer)
-{
-	Player = inPlayer;
-}
+//void APlayerCamera::Init(APlayerCharacter* inPlayer)
+//{
+//	Player = inPlayer;
+//}
 
-void APlayerCamera::UpdateTransform()
-{
-	FVector MyLocation = GetActorLocation();
-	FVector PlayerLocation = Player->GetActorLocation();
-	float Distance = FVector::Distance(MyLocation, PlayerLocation);
-
-	FVector NewLocation;
-
-	// カメラが離れていい距離を超えているか
-	if (Distance > LagMaxDistance)
-	{
-		// LagMaxDistanceの距離までに補正した位置にする
-		FVector ForwardVec = UKismetMathLibrary::GetForwardVector(UKismetMathLibrary::FindLookAtRotation(PlayerLocation, MyLocation));
-		NewLocation = PlayerLocation + ForwardVec * LagMaxDistance;
-	}
-	else
-	{
-		// ラグりながら近づく
-		NewLocation = FMath::Lerp(MyLocation, PlayerLocation, LagSpeed);
-	}
-
-	SetActorLocation(NewLocation);
-	SetActorRotation(Player->GetControlRotation());
-}
-
+//void APlayerCamera::UpdateTransform()
+//{
+//	FVector MyLocation = GetActorLocation();
+//	FVector PlayerLocation = Player->GetActorLocation();
+//	float Distance = FVector::Distance(MyLocation, PlayerLocation);
+//
+//	FVector NewLocation;
+//
+//	// カメラが離れていい距離を超えているか
+//	if (Distance > LagMaxDistance)
+//	{
+//		// LagMaxDistanceの距離までに補正した位置にする
+//		FVector ForwardVec = UKismetMathLibrary::GetForwardVector(UKismetMathLibrary::FindLookAtRotation(PlayerLocation, MyLocation));
+//		NewLocation = PlayerLocation + ForwardVec * LagMaxDistance;
+//	}
+//	else
+//	{
+//		// ラグりながら近づく
+//		NewLocation = FMath::Lerp(MyLocation, PlayerLocation, LagSpeed);
+//	}
+//
+//	SetActorLocation(NewLocation);
+//	SetActorRotation(Player->GetControlRotation());
+//}
+//

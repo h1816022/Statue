@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "PlayerModeType.h"
 #include "PlayerCharacter.generated.h"
 
 class ACamera;
@@ -18,6 +19,9 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	UPROPERTY(BlueprintReadWrite)
+	EPlayerModeType NowModeType;
 
 public:	
 	virtual void Tick(float DeltaTime) override;

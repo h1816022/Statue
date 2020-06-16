@@ -22,6 +22,8 @@ APlayerCharacter::APlayerCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
+
+	NowModeType = EPlayerModeType::Default;
 }
 
 void APlayerCharacter::BeginPlay()

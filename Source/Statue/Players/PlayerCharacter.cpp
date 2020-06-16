@@ -101,3 +101,11 @@ void APlayerCharacter::LookUpAtRate(float Rate)
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
+void APlayerCharacter::Jump()
+{
+	if (GetCharacterMovement()->IsFalling())
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+	}
+}
+

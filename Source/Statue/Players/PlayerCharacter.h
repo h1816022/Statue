@@ -39,6 +39,7 @@ private:
 	void MoveRight(float Value);
 	void TurnAtRate(float Rate);
 	void LookUpAtRate(float Rate);
+	void Jump()override;
 
 	UPROPERTY()
 	ACamera* Camera;

@@ -30,9 +30,18 @@ void APlayerCharacter::BeginPlay()
 	
 	FTransform SpawnTransform(FRotator(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f));
 
-	Camera = Cast<APlayerCamera>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, APlayerCamera::StaticClass(), SpawnTransform));
-	Camera->Init(this);
-	UGameplayStatics::FinishSpawningActor(Camera, SpawnTransform);
+	// カメラブループリントのクラスのパス
+	FString Path = "/Game/_Users/Players/Blueprints/BP_PlayerCamera.BP_PlayerCamera_C";
+	TSubclassOf<class APlayerCamera> Sc = TSoftClassPtr<APlayerCamera>(FSoftObjectPath(*Path)).LoadSynchronous();
+	if (Sc != nullptr)
+	{
+		// 生成処理
+		Camera = Cast<APlayerCamera>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, Sc, SpawnTransform));
+
+		// コンストラクタの前に変数を書き換えるInit処理
+		Camera->Init(this);
+		UGameplayStatics::FinishSpawningActor(Camera, SpawnTransform);
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)

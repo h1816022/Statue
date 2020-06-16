@@ -2,6 +2,8 @@
 #include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
+#include "PlayerCamera.h"
+#include "Kismet/GameplayStatics.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -25,6 +27,12 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	FTransform SpawnTransform(FRotator(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f));
+
+	Camera = Cast<APlayerCamera>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, APlayerCamera::StaticClass(), SpawnTransform));
+	Camera->Init(this);
+	UGameplayStatics::FinishSpawningActor(Camera, SpawnTransform);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)

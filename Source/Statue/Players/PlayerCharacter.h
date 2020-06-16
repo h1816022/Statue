@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacter.generated.h"
 
+class APlayerCamera;
+
 UCLASS()
 class STATUE_API APlayerCharacter : public ACharacter
 {
@@ -33,4 +35,7 @@ private:
 	void MoveRight(float Value);
 	void TurnAtRate(float Rate);
 	void LookUpAtRate(float Rate);
+
+	UPROPERTY()
+	APlayerCamera* Camera;
 };

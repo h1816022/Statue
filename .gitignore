@@ -13,3 +13,5 @@ Saved
 *.xcodeproj
 *.xcworkspace
 /Content/Peasant_Villager_Boy/Levels/Peasant_Boy_Demo_BuiltData.uasset
+/Content/Cathedral/Map/Cathedral_Map_BuiltData.uasset
+/Content/Cathedral/Map/Demo_Map_BuiltData.uasset

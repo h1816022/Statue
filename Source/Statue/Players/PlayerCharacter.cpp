@@ -60,12 +60,35 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerCharacter::MoveRight);
+	PlayerInputComponent->BindAxis("MoveTop", this, &APlayerCharacter::MoveTop);
 
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &APlayerCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &APlayerCharacter::LookUpAtRate);
+}
 
+void APlayerCharacter::NotifyHit(
+	UPrimitiveComponent* MyComp, 
+	AActor* Other, 
+	UPrimitiveComponent* OtherComp, 
+	bool bSelfMoved, 
+	FVector HitLocation, 
+	FVector HitNormal, 
+	FVector NormalImpulse, 
+	const FHitResult& Hit)
+{
+	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
+
+	// 歩行可能な角度
+	auto WalkableAngle = FMath::DegreesToRadians(GetCharacterMovement()->GetWalkableFloorAngle());
+
+	// 飛行モードで、かつ接触した物体が歩行可能な法線を返した場合に歩行モードにする
+	if (GetCharacterMovement()->IsFlying()
+	&& acosf(FVector::DotProduct(HitNormal, FVector::UpVector)) < WalkableAngle)
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	}
 }
 
 void APlayerCharacter::MoveForward(float Value)
@@ -91,6 +114,23 @@ void APlayerCharacter::MoveRight(float Value)
 	}
 }
 
+void APlayerCharacter::MoveTop(float Value)
+{
+	if ((Controller != nullptr) && (Value != 0.0f))
+	{
+		if (Value > 0 && !GetCharacterMovement()->IsFlying())
+		{
+			GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+		}
+
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Z);
+		AddMovementInput(Direction, Value);
+	}
+}
+
 void APlayerCharacter::TurnAtRate(float Rate)
 {
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
@@ -103,9 +143,17 @@ void APlayerCharacter::LookUpAtRate(float Rate)
 
 void APlayerCharacter::Jump()
 {
-	if (GetCharacterMovement()->IsFalling())
+	auto Cm = GetCharacterMovement();
+	if (Cm->IsFalling())
 	{
 		GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 	}
+	else if (Cm->IsFlying())
+	{
+		Cm->SetMovementMode(MOVE_Falling);
+	}
+	else
+	{
+		Super::Jump();
+	}
 }
-

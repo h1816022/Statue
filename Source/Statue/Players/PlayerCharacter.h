@@ -23,10 +23,20 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	EPlayerModeType NowModeType;
 
-public:	
+public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void NotifyHit(
+		UPrimitiveComponent* MyComp, 
+		AActor* Other, 
+		UPrimitiveComponent* OtherComp, 
+		bool bSelfMoved, 
+		FVector HitLocation, 
+		FVector HitNormal, 
+		FVector NormalImpulse, 
+		const FHitResult& Hit)override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float BaseTurnRate;
@@ -40,6 +50,7 @@ private:
 	void TurnAtRate(float Rate);
 	void LookUpAtRate(float Rate);
 	void Jump()override;
+	void MoveTop(float Value);
 
 	UPROPERTY()
 	ACamera* Camera;

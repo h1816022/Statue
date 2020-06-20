@@ -24,6 +24,7 @@ APlayerCharacter::APlayerCharacter()
 	GetCharacterMovement()->AirControl = 0.2f;
 
 	NowModeType = EPlayerModeType::Default;
+	DesiredGait = EGait::Running;
 }
 
 void APlayerCharacter::BeginPlay()
@@ -55,81 +56,72 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerCharacter::MoveRight);
-	PlayerInputComponent->BindAxis("MoveTop", this, &APlayerCharacter::MoveTop);
+	//PlayerInputComponent->BindAxis("MoveTop", this, &APlayerCharacter::MoveTop);
 
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &APlayerCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &APlayerCharacter::LookUpAtRate);
+
+	PlayerInputComponent->BindAction(TEXT("Walk"), EInputEvent::IE_Pressed, this, &APlayerCharacter::ChangeWalkMode);
+	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Pressed, this, &APlayerCharacter::StartSprint);
+	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Released, this, &APlayerCharacter::EndSprint);
+	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &APlayerCharacter::JumpStart);
+	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Released, this, &APlayerCharacter::JumpEnd);
+	PlayerInputComponent->BindAction(TEXT("Stance"), EInputEvent::IE_Pressed, this, &APlayerCharacter::ChangeStance);
 }
 
-void APlayerCharacter::NotifyHit(
-	UPrimitiveComponent* MyComp, 
-	AActor* Other, 
-	UPrimitiveComponent* OtherComp, 
-	bool bSelfMoved, 
-	FVector HitLocation, 
-	FVector HitNormal, 
-	FVector NormalImpulse, 
-	const FHitResult& Hit)
-{
-	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
-
-	// 歩行可能な角度
-	auto WalkableAngle = FMath::DegreesToRadians(GetCharacterMovement()->GetWalkableFloorAngle());
-
-	// 飛行モードで、かつ接触した物体が歩行可能な法線を返した場合に歩行モードにする
-	if (GetCharacterMovement()->IsFlying()
-	&& acosf(FVector::DotProduct(HitNormal, FVector::UpVector)) < WalkableAngle)
-	{
-		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-	}
-}
+//void APlayerCharacter::NotifyHit(
+//	UPrimitiveComponent* MyComp, 
+//	AActor* Other, 
+//	UPrimitiveComponent* OtherComp, 
+//	bool bSelfMoved, 
+//	FVector HitLocation, 
+//	FVector HitNormal, 
+//	FVector NormalImpulse, 
+//	const FHitResult& Hit)
+//{
+//	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
+//
+//	// 歩行可能な角度
+//	auto WalkableAngle = FMath::DegreesToRadians(GetCharacterMovement()->GetWalkableFloorAngle());
+//
+//	// 飛行モードで、かつ接触した物体が歩行可能な法線を返した場合に歩行モードにする
+//	if (GetCharacterMovement()->IsFlying()
+//	&& acosf(FVector::DotProduct(HitNormal, FVector::UpVector)) < WalkableAngle)
+//	{
+//		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+//	}
+//}
 
 void APlayerCharacter::MoveForward(float Value)
 {
-	if ((Controller != nullptr) && (Value != 0.0f))
-	{
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		AddMovementInput(Direction, Value);
-	}
+	PlayerMovementInput(true);
 }
 
 void APlayerCharacter::MoveRight(float Value)
 {
-	if ((Controller != nullptr) && (Value != 0.0f))
-	{
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-		AddMovementInput(Direction, Value);
-	}
+	PlayerMovementInput(false);
 }
 
-void APlayerCharacter::MoveTop(float Value)
-{
-	if ((Controller != nullptr) && (Value != 0.0f))
-	{
-		if (Value > 0 && !GetCharacterMovement()->IsFlying())
-		{
-			GetCharacterMovement()->SetMovementMode(MOVE_Flying);
-		}
-
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Z);
-		AddMovementInput(Direction, Value);
-	}
-}
+//void APlayerCharacter::MoveTop(float Value)
+//{
+//	if ((Controller != nullptr) && (Value != 0.0f))
+//	{
+//		if (Value > 0 && !GetCharacterMovement()->IsFlying())
+//		{
+//			GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+//		}
+//
+//		const FRotator Rotation = Controller->GetControlRotation();
+//		const FRotator YawRotation(0, Rotation.Yaw, 0);
+//
+//		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Z);
+//		AddMovementInput(Direction, Value);
+//	}
+//}
 
 void APlayerCharacter::TurnAtRate(float Rate)
 {
@@ -141,19 +133,27 @@ void APlayerCharacter::LookUpAtRate(float Rate)
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
-void APlayerCharacter::Jump()
+void APlayerCharacter::ChangeWalkMode()
 {
-	auto Cm = GetCharacterMovement();
-	if (Cm->IsFalling())
+	switch (DesiredGait)
 	{
-		GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+	case EGait::Walking:
+		DesiredGait = EGait::Running;
+	case EGait::Running:
+		DesiredGait = EGait::Walking;
+	case EGait::Sprinting:
+		;
+	default:
+		;
 	}
-	else if (Cm->IsFlying())
-	{
-		Cm->SetMovementMode(MOVE_Falling);
-	}
-	else
-	{
-		Super::Jump();
-	}
+}
+
+void APlayerCharacter::StartSprint()
+{
+	DesiredGait = EGait::Sprinting;
+}
+
+void APlayerCharacter::EndSprint()
+{
+	DesiredGait = EGait::Running;
 }

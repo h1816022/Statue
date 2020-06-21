@@ -8,6 +8,6 @@
 UENUM(BlueprintType)
 enum class EPlayerModeType : uint8
 {
-	Default,
+	Human,
 	Statue
 };

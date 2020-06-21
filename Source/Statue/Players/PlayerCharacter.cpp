@@ -23,8 +23,9 @@ APlayerCharacter::APlayerCharacter()
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
 
-	NowModeType = EPlayerModeType::Default;
+	NowModeType = EPlayerModeType::Human;
 	DesiredGait = EGait::Running;
+	bCanChangeMode = true;
 }
 
 void APlayerCharacter::BeginPlay()
@@ -47,6 +48,24 @@ void APlayerCharacter::BeginPlay()
 	}
 }
 
+void APlayerCharacter::SetCanChangeMode(bool NewFlag)
+{
+	if (NewFlag)
+	{
+		DontChangeCount = FMath::Max(DontChangeCount - 1, 0);
+
+		if (DontChangeCount == 0)
+		{
+			bCanChangeMode = true;
+		}
+	}
+	else
+	{
+		DontChangeCount++;
+		bCanChangeMode = false;
+	}
+}
+
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -58,7 +77,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerCharacter::MoveRight);
-	//PlayerInputComponent->BindAxis("MoveTop", this, &APlayerCharacter::MoveTop);
+	PlayerInputComponent->BindAxis("MoveTop", this, &APlayerCharacter::MoveTop);
 
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &APlayerCharacter::TurnAtRate);
@@ -73,28 +92,28 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction(TEXT("Stance"), EInputEvent::IE_Pressed, this, &APlayerCharacter::ChangeStance);
 }
 
-//void APlayerCharacter::NotifyHit(
-//	UPrimitiveComponent* MyComp, 
-//	AActor* Other, 
-//	UPrimitiveComponent* OtherComp, 
-//	bool bSelfMoved, 
-//	FVector HitLocation, 
-//	FVector HitNormal, 
-//	FVector NormalImpulse, 
-//	const FHitResult& Hit)
-//{
-//	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
-//
-//	// 歩行可能な角度
-//	auto WalkableAngle = FMath::DegreesToRadians(GetCharacterMovement()->GetWalkableFloorAngle());
-//
-//	// 飛行モードで、かつ接触した物体が歩行可能な法線を返した場合に歩行モードにする
-//	if (GetCharacterMovement()->IsFlying()
-//	&& acosf(FVector::DotProduct(HitNormal, FVector::UpVector)) < WalkableAngle)
-//	{
-//		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-//	}
-//}
+void APlayerCharacter::NotifyHit(
+	UPrimitiveComponent* MyComp, 
+	AActor* Other, 
+	UPrimitiveComponent* OtherComp, 
+	bool bSelfMoved, 
+	FVector HitLocation, 
+	FVector HitNormal, 
+	FVector NormalImpulse, 
+	const FHitResult& Hit)
+{
+	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
+
+	// 歩行可能な角度
+	auto WalkableAngle = FMath::DegreesToRadians(GetCharacterMovement()->GetWalkableFloorAngle());
+
+	// 飛行モードで、かつ接触した物体が歩行可能な法線を返した場合に歩行モードにする
+	if (GetCharacterMovement()->IsFlying()
+	&& acosf(FVector::DotProduct(HitNormal, FVector::UpVector)) < WalkableAngle)
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	}
+}
 
 void APlayerCharacter::MoveForward(float Value)
 {
@@ -106,22 +125,22 @@ void APlayerCharacter::MoveRight(float Value)
 	PlayerMovementInput(false);
 }
 
-//void APlayerCharacter::MoveTop(float Value)
-//{
-//	if ((Controller != nullptr) && (Value != 0.0f))
-//	{
-//		if (Value > 0 && !GetCharacterMovement()->IsFlying())
-//		{
-//			GetCharacterMovement()->SetMovementMode(MOVE_Flying);
-//		}
-//
-//		const FRotator Rotation = Controller->GetControlRotation();
-//		const FRotator YawRotation(0, Rotation.Yaw, 0);
-//
-//		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Z);
-//		AddMovementInput(Direction, Value);
-//	}
-//}
+void APlayerCharacter::MoveTop(float Value)
+{
+	if ((Controller != nullptr) && (Value != 0.0f))
+	{
+		if (Value > 0 && !GetCharacterMovement()->IsFlying())
+		{
+			GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+		}
+
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Z);
+		AddMovementInput(Direction, Value);
+	}
+}
 
 void APlayerCharacter::TurnAtRate(float Rate)
 {

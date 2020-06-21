@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "PlayerModeType.h"
-#include "../ALS/Gait.h"
+#include "../ALS/ALSEnums.h"
 #include "PlayerCharacter.generated.h"
 
 class ACamera;
@@ -45,6 +45,9 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void JumpEnd();
 
+	UFUNCTION(BlueprintCallable)
+	void SetCanChangeMode(bool NewFlag);
+
 	// 現在のプレイヤーのモード
 	UPROPERTY(BlueprintReadWrite)
 	EPlayerModeType NowModeType;
@@ -57,20 +60,24 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	bool bSprintHeld;
 
+	// モードチェンジ可能か
+	UPROPERTY(BlueprintReadOnly)
+	bool bCanChangeMode;
+
 public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	//virtual void NotifyHit(
-	//	UPrimitiveComponent* MyComp, 
-	//	AActor* Other, 
-	//	UPrimitiveComponent* OtherComp, 
-	//	bool bSelfMoved, 
-	//	FVector HitLocation, 
-	//	FVector HitNormal, 
-	//	FVector NormalImpulse, 
-	//	const FHitResult& Hit)override;
+	virtual void NotifyHit(
+		UPrimitiveComponent* MyComp, 
+		AActor* Other, 
+		UPrimitiveComponent* OtherComp, 
+		bool bSelfMoved, 
+		FVector HitLocation, 
+		FVector HitNormal, 
+		FVector NormalImpulse, 
+		const FHitResult& Hit)override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float BaseTurnRate;
@@ -101,8 +108,10 @@ private:
 	void EndSprint();
 
 	// 飛ぶ
-	//void MoveTop(float Value);
+	void MoveTop(float Value);
 
 	UPROPERTY()
 	ACamera* Camera;
+
+	uint8 DontChangeCount = 0;
 };

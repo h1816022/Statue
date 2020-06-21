@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "Gait.generated.h"
+#include "ALSEnums.generated.h"
 
 UENUM(BlueprintType)
 enum class EGait : uint8

@@ -66,7 +66,7 @@ void ACamera::UpdateTransform()
 	// ‰ñ“]
 	if (Player->GetCharacterMovement()->MovementMode == MOVE_Flying)
 	{
-		SetActorRotation(Player->GetActorRotation());
+		SetActorRotation(Player->GetControlRotation());
 	}
 	else
 	{

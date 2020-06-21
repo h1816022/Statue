@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "PlayerCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 ACamera::ACamera()
 {
@@ -16,7 +17,6 @@ ACamera::ACamera()
 	SetRootComponent(Arrow);
 	CameraArm->SetupAttachment(Arrow);
 	Camera->SetupAttachment(CameraArm);
-
 }
 
 void ACamera::BeginPlay()
@@ -62,7 +62,16 @@ void ACamera::UpdateTransform()
 	}
 
 	SetActorLocation(NewLocation);
-	SetActorRotation(Player->GetControlRotation());
+
+	// ‰ñ“]
+	if (Player->GetCharacterMovement()->MovementMode == MOVE_Flying)
+	{
+		SetActorRotation(Player->GetActorRotation());
+	}
+	else
+	{
+		SetActorRotation(Player->GetControlRotation());
+	}
 }
 
 

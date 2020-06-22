@@ -27,6 +27,12 @@ struct STATUE_API FMovementSettings
 		float SprintSpeed;
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float HoverSpeed;
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float FlyingSpeed;
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		UCurveVector* MovementCurve;
 
 		UPROPERTY(EditAnywhere, BlueprintReadWrite)

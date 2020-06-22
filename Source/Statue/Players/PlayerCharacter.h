@@ -95,11 +95,11 @@ private:
 	// 左右移動
 	void MoveRight(float Value);
 
-	// カメラ横移動
-	void TurnAtRate(float Rate);
+	//// カメラ横移動
+	//void TurnAtRate(float Rate);
 
-	// カメラ縦移動
-	void LookUpAtRate(float Rate);
+	//// カメラ縦移動
+	//void LookUpAtRate(float Rate);
 
 	// 歩き/走りの切り替え
 	void ChangeWalkMode();

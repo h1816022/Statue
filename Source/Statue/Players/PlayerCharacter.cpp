@@ -79,10 +79,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerCharacter::MoveRight);
 	//PlayerInputComponent->BindAxis("MoveTop", this, &APlayerCharacter::MoveTop);
 
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("TurnRate", this, &APlayerCharacter::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &APlayerCharacter::LookUpAtRate);
+	//PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	//PlayerInputComponent->BindAxis("TurnRate", this, &APlayerCharacter::TurnAtRate);
+	//PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	//PlayerInputComponent->BindAxis("LookUpRate", this, &APlayerCharacter::LookUpAtRate);
 
 	PlayerInputComponent->BindAction(TEXT("Walk"), EInputEvent::IE_Pressed, this, &APlayerCharacter::ChangeWalkMode);
 	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Pressed, this, &APlayerCharacter::StartSprint);
@@ -142,15 +142,15 @@ void APlayerCharacter::MoveRight(float Value)
 //	}
 //}
 
-void APlayerCharacter::TurnAtRate(float Rate)
-{
-	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
-}
-
-void APlayerCharacter::LookUpAtRate(float Rate)
-{
-	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
-}
+//void APlayerCharacter::TurnAtRate(float Rate)
+//{
+//	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+//}
+//
+//void APlayerCharacter::LookUpAtRate(float Rate)
+//{
+//	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+//}
 
 void APlayerCharacter::ChangeWalkMode()
 {

@@ -11,5 +11,7 @@ enum class EGait : uint8
 {
 	Walking,
 	Running,
-	Sprinting
+	Sprinting,
+	Hovering,
+	Flying
 };

@@ -69,21 +69,24 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual void NotifyHit(
-		UPrimitiveComponent* MyComp, 
-		AActor* Other, 
-		UPrimitiveComponent* OtherComp, 
-		bool bSelfMoved, 
-		FVector HitLocation, 
-		FVector HitNormal, 
-		FVector NormalImpulse, 
-		const FHitResult& Hit)override;
+	//virtual void NotifyHit(
+	//	UPrimitiveComponent* MyComp, 
+	//	AActor* Other, 
+	//	UPrimitiveComponent* OtherComp, 
+	//	bool bSelfMoved, 
+	//	FVector HitLocation, 
+	//	FVector HitNormal, 
+	//	FVector NormalImpulse, 
+	//	const FHitResult& Hit)override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float BaseTurnRate;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float BaseLookUpRate;
+
+	UPROPERTY(BlueprintReadOnly)
+	ACamera* Camera;
 
 private:
 	// ‘OŒãˆÚ“®
@@ -108,10 +111,7 @@ private:
 	void EndSprint();
 
 	// ”ò‚Ô
-	void MoveTop(float Value);
-
-	UPROPERTY()
-	ACamera* Camera;
+	//void MoveTop(float Value);
 
 	uint8 DontChangeCount = 0;
 };

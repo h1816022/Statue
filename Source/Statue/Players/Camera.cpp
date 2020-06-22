@@ -40,6 +40,11 @@ void ACamera::Init(APlayerCharacter* inPlayer)
 	Player = inPlayer;
 }
 
+UCameraComponent* ACamera::GetCameraComponent()const
+{
+	return Camera;
+}
+
 void ACamera::UpdateTransform()
 {
 	FVector MyLocation = GetActorLocation();

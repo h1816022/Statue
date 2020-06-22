@@ -20,10 +20,16 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY(BlueprintReadWrite)
+	APlayerCharacter* Player;
+
 public:	
 	virtual void Tick(float DeltaTime) override;
 
 	void Init(APlayerCharacter* inPlayer);
+
+	UFUNCTION(BlueprintPure)
+	UCameraComponent* GetCameraComponent()const;
 
 private:
 	void UpdateTransform();
@@ -42,7 +48,4 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float LagMaxDistance = 400.0f;
-
-	UPROPERTY()
-	APlayerCharacter* Player;
 };

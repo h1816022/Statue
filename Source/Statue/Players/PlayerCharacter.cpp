@@ -34,9 +34,9 @@ void APlayerCharacter::BeginPlay()
 	
 	FTransform SpawnTransform(FRotator(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f));
 
-	// カメラブループリントのクラスのパス
-	FString Path = "/Game/_Users/Players/Blueprints/BP_Camera.BP_Camera_C";
+	FString Path = "/Game/_Users/Cameras/Blueprints/BP_Camera.BP_Camera_C";
 	TSubclassOf<class ACamera> Sc = TSoftClassPtr<ACamera>(FSoftObjectPath(*Path)).LoadSynchronous();
+
 	if (Sc != nullptr)
 	{
 		// 生成処理
@@ -45,6 +45,10 @@ void APlayerCharacter::BeginPlay()
 		// コンストラクタの前に変数を書き換えるInit処理
 		Camera->Init(this);
 		UGameplayStatics::FinishSpawningActor(Camera, SpawnTransform);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("NULL"));
 	}
 }
 

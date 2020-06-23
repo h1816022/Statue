@@ -8,6 +8,7 @@ class UArrowComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class APlayerCharacter;
+class UPostProcessComponent;
 
 UCLASS()
 class STATUE_API ACamera : public AActor
@@ -20,6 +21,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	// 位置と回転の更新
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void UpdateTransform();
 	void UpdateTransform_Implementation();
@@ -35,6 +37,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	UCameraComponent* GetCameraComponent()const;
 
+	UFUNCTION(BlueprintCallable)
+	void ChangeBlar(bool bIsOn);
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	UArrowComponent* Arrow;
@@ -45,9 +50,19 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* Camera;
 
+	// カメラが追いかける速さ1
 	UPROPERTY(EditAnywhere)
 	float LagSpeed = 0.1f;
 
+	// 離れていい距離
 	UPROPERTY(EditAnywhere)
 	float LagMaxDistance = 400.0f;
+
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInterface* FlightBlurMatInterface;
+
+	UMaterialInstanceDynamic* FlightBlurMat;
+
+	UPROPERTY(VisibleAnywhere)
+	UPostProcessComponent* PostProcess;
 };

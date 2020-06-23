@@ -20,6 +20,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void UpdateTransform();
+	void UpdateTransform_Implementation();
+
 	UPROPERTY(BlueprintReadWrite)
 	APlayerCharacter* Player;
 
@@ -32,8 +36,6 @@ public:
 	UCameraComponent* GetCameraComponent()const;
 
 private:
-	void UpdateTransform();
-
 	UPROPERTY(VisibleAnywhere)
 	UArrowComponent* Arrow;
 

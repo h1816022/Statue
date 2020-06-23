@@ -45,7 +45,7 @@ UCameraComponent* ACamera::GetCameraComponent()const
 	return Camera;
 }
 
-void ACamera::UpdateTransform()
+void ACamera::UpdateTransform_Implementation()
 {
 	FVector MyLocation = GetActorLocation();
 	FVector PlayerLocation = Player->GetActorLocation();

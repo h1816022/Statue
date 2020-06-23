@@ -49,18 +49,23 @@ void ACamera::UpdateTransform_Implementation()
 {
 	FVector MyLocation = GetActorLocation();
 	FVector PlayerLocation = Player->GetActorLocation();
+
+	SetActorLocation(PlayerLocation);
+
+	return;
+
 	float Distance = FVector::Distance(MyLocation, PlayerLocation);
 
 	FVector NewLocation;
 
 	// カメラが離れていい距離を超えているか
-	if (Distance > LagMaxDistance)
-	{
-		// LagMaxDistanceの距離までに補正した位置にする
-		FVector ForwardVec = UKismetMathLibrary::GetForwardVector(UKismetMathLibrary::FindLookAtRotation(PlayerLocation, MyLocation));
-		NewLocation = PlayerLocation + ForwardVec * LagMaxDistance;
-	}
-	else
+	//if (Distance > LagMaxDistance)
+	//{
+	//	// LagMaxDistanceの距離までに補正した位置にする
+	//	FVector ForwardVec = UKismetMathLibrary::GetForwardVector(UKismetMathLibrary::FindLookAtRotation(PlayerLocation, MyLocation));
+	//	NewLocation = PlayerLocation + ForwardVec * LagMaxDistance;
+	//}
+	//else
 	{
 		// ラグりながら近づく
 		NewLocation = FMath::Lerp(MyLocation, PlayerLocation, LagSpeed);
@@ -69,14 +74,7 @@ void ACamera::UpdateTransform_Implementation()
 	SetActorLocation(NewLocation);
 
 	// 回転
-	if (Player->GetCharacterMovement()->MovementMode == MOVE_Flying)
-	{
-		SetActorRotation(Player->GetControlRotation());
-	}
-	else
-	{
-		SetActorRotation(Player->GetControlRotation());
-	}
+	SetActorRotation(Player->GetControlRotation());
 }
 
 

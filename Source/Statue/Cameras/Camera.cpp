@@ -70,10 +70,6 @@ void ACamera::UpdateTransform_Implementation()
 	FVector MyLocation = GetActorLocation();
 	FVector PlayerLocation = Player->GetActorLocation();
 
-	//SetActorLocation(PlayerLocation);
-
-	//return;
-
 	SetActorLocation(FMath::Lerp(MyLocation, PlayerLocation, LagSpeed));
 }
 

@@ -5,6 +5,7 @@
 #include "../Cameras/Camera.h"
 #include "Kismet/GameplayStatics.h"
 #include "../Cameras/MyCameraShake.h"
+#include "GameFramework/PhysicsVolume.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -35,6 +36,8 @@ void APlayerCharacter::BeginPlay()
 	
 	FTransform SpawnTransform(GetActorRotation(), GetActorLocation());
 
+
+	// カメラ生成
 	FString Path = "/Game/_Users/Cameras/Blueprints/BP_Camera.BP_Camera_C";
 	TSubclassOf<class ACamera> Sc = TSoftClassPtr<ACamera>(FSoftObjectPath(*Path)).LoadSynchronous();
 
@@ -47,6 +50,14 @@ void APlayerCharacter::BeginPlay()
 		Camera->Init(this);
 		UGameplayStatics::FinishSpawningActor(Camera, SpawnTransform);
 	}
+
+	// メッシュのマテリアル取得
+	auto MyMesh = GetMesh();
+	BodyMaterial = MyMesh->CreateDynamicMaterialInstance(0, MyMesh->GetMaterial(0));
+
+	auto Cm = GetCharacterMovement();
+	Cm->GroundFriction = 100.0f;
+	Cm->GetPhysicsVolume()->FluidFriction = 0.0f;
 }
 
 void APlayerCharacter::SetCanChangeMode(bool NewFlag)
@@ -78,12 +89,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerCharacter::MoveRight);
-	//PlayerInputComponent->BindAxis("MoveTop", this, &APlayerCharacter::MoveTop);
-
-	//PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	//PlayerInputComponent->BindAxis("TurnRate", this, &APlayerCharacter::TurnAtRate);
-	//PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	//PlayerInputComponent->BindAxis("LookUpRate", this, &APlayerCharacter::LookUpAtRate);
 
 	PlayerInputComponent->BindAction(TEXT("Walk"), EInputEvent::IE_Pressed, this, &APlayerCharacter::ChangeWalkMode);
 	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Pressed, this, &APlayerCharacter::StartSprint);
@@ -100,29 +105,6 @@ void APlayerCharacter::PlayCameraShake(ECameraShakeType Type)
 	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayCameraShake(ShakeData[Type], 1.0F);
 }
 
-//void APlayerCharacter::NotifyHit(
-//	UPrimitiveComponent* MyComp, 
-//	AActor* Other, 
-//	UPrimitiveComponent* OtherComp, 
-//	bool bSelfMoved, 
-//	FVector HitLocation, 
-//	FVector HitNormal, 
-//	FVector NormalImpulse, 
-//	const FHitResult& Hit)
-//{
-//	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
-//
-//	// 歩行可能な角度
-//	auto WalkableAngle = FMath::DegreesToRadians(GetCharacterMovement()->GetWalkableFloorAngle());
-//
-//	// 飛行モードで、かつ接触した物体が歩行可能な法線を返した場合に歩行モードにする
-//	if (GetCharacterMovement()->IsFlying()
-//	&& acosf(FVector::DotProduct(HitNormal, FVector::UpVector)) < WalkableAngle)
-//	{
-//		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-//	}
-//}
-
 void APlayerCharacter::MoveForward(float Value)
 {
 	PlayerMovementInput(true);
@@ -132,33 +114,6 @@ void APlayerCharacter::MoveRight(float Value)
 {
 	PlayerMovementInput(false);
 }
-
-//void APlayerCharacter::MoveTop(float Value)
-//{
-//	if ((Controller != nullptr) && (Value != 0.0f))
-//	{
-//		if (Value > 0 && !GetCharacterMovement()->IsFlying())
-//		{
-//			GetCharacterMovement()->SetMovementMode(MOVE_Flying);
-//		}
-//
-//		const FRotator Rotation = Controller->GetControlRotation();
-//		const FRotator YawRotation(0, Rotation.Yaw, 0);
-//
-//		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Z);
-//		AddMovementInput(Direction, Value);
-//	}
-//}
-
-//void APlayerCharacter::TurnAtRate(float Rate)
-//{
-//	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
-//}
-//
-//void APlayerCharacter::LookUpAtRate(float Rate)
-//{
-//	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
-//}
 
 void APlayerCharacter::ChangeWalkMode()
 {

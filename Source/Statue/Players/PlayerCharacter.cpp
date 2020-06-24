@@ -2,7 +2,7 @@
 #include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
-#include "Camera.h"
+#include "../Cameras/Camera.h"
 #include "Kismet/GameplayStatics.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -93,7 +93,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction(TEXT("Sprint"), EInputEvent::IE_Released, this, &APlayerCharacter::EndSprint);
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &APlayerCharacter::JumpStart);
 	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Released, this, &APlayerCharacter::JumpEnd);
-	PlayerInputComponent->BindAction(TEXT("Stance"), EInputEvent::IE_Pressed, this, &APlayerCharacter::ChangeStance);
+	PlayerInputComponent->BindAction(TEXT("Stance"), EInputEvent::IE_Pressed, this, &APlayerCharacter::StartStance);
+	PlayerInputComponent->BindAction(TEXT("Stance"), EInputEvent::IE_Released, this, &APlayerCharacter::EndStance);
 }
 
 //void APlayerCharacter::NotifyHit(

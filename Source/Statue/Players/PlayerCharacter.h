@@ -35,7 +35,10 @@ protected:
 
 	// しゃがみ/立ちの切り替え
 	UFUNCTION(BlueprintImplementableEvent)
-	void ChangeStance();
+	void StartStance();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void EndStance();
 
 	// ジャンプボタンを押したとき
 	UFUNCTION(BlueprintImplementableEvent)

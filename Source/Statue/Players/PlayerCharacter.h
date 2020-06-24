@@ -4,9 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "PlayerModeType.h"
+#include "PlayerStatus.h"
 #include "../ALS/ALSEnums.h"
 #include "PlayerCharacter.generated.h"
+
+UENUM(BlueprintType)
+enum class ECameraShakeType : uint8
+{
+	Landhing
+};
 
 class ACamera;
 
@@ -82,6 +88,9 @@ public:
 	//	FVector NormalImpulse, 
 	//	const FHitResult& Hit)override;
 
+	UFUNCTION(BlueprintCallable)
+	void PlayCameraShake(ECameraShakeType Type);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float BaseTurnRate;
 
@@ -90,6 +99,10 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	ACamera* Camera;
+
+	// タイプごとのカメラシェイク用パラメータ
+	UPROPERTY(EditAnywhere)
+	TMap<ECameraShakeType, TSubclassOf<UCameraShake>> ShakeData;
 
 private:
 	// 前後移動

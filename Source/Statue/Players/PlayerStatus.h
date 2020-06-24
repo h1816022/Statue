@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PlayerModeType.generated.h"
+#include "PlayerStatus.generated.h"
 
 UENUM(BlueprintType)
 enum class EPlayerModeType : uint8

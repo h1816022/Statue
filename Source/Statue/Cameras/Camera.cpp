@@ -70,31 +70,11 @@ void ACamera::UpdateTransform_Implementation()
 	FVector MyLocation = GetActorLocation();
 	FVector PlayerLocation = Player->GetActorLocation();
 
-	SetActorLocation(PlayerLocation);
+	//SetActorLocation(PlayerLocation);
 
-	return;
+	//return;
 
-	float Distance = FVector::Distance(MyLocation, PlayerLocation);
-
-	FVector NewLocation;
-
-	// ƒJƒƒ‰‚ª—£‚ê‚Ä‚¢‚¢‹——£‚ð’´‚¦‚Ä‚¢‚é‚©
-	//if (Distance > LagMaxDistance)
-	//{
-	//	// LagMaxDistance‚Ì‹——£‚Ü‚Å‚É•â³‚µ‚½ˆÊ’u‚É‚·‚é
-	//	FVector ForwardVec = UKismetMathLibrary::GetForwardVector(UKismetMathLibrary::FindLookAtRotation(PlayerLocation, MyLocation));
-	//	NewLocation = PlayerLocation + ForwardVec * LagMaxDistance;
-	//}
-	//else
-	{
-		// ƒ‰ƒO‚è‚È‚ª‚ç‹ß‚Ã‚­
-		NewLocation = FMath::Lerp(MyLocation, PlayerLocation, LagSpeed);
-	}
-
-	SetActorLocation(NewLocation);
-
-	// ‰ñ“]
-	SetActorRotation(Player->GetControlRotation());
+	SetActorLocation(FMath::Lerp(MyLocation, PlayerLocation, LagSpeed));
 }
 
 

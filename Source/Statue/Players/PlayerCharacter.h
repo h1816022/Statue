@@ -15,6 +15,7 @@ enum class ECameraShakeType : uint8
 };
 
 class ACamera;
+struct FTimeline;
 
 UCLASS()
 class STATUE_API APlayerCharacter : public ACharacter
@@ -81,8 +82,14 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	// タイプごとのカメラ振動を再生
 	UFUNCTION(BlueprintCallable)
 	void PlayCameraShake(ECameraShakeType Type);
+
+	// プレイヤーのモードを変更
+	// CertainlyChangeで、変更中でも変更を待機させのちに遂行させる
+	UFUNCTION(BlueprintCallable)
+	void ChangePlayerMode(EPlayerModeType NewMode, bool bIsCertainlyChange);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float BaseTurnRate;
@@ -113,6 +120,14 @@ private:
 	// ダッシュを終える
 	void EndSprint();
 
+	UFUNCTION()
+	void UpdateBodyMaterial(float Value);
+
+	UFUNCTION()
+	void Finished();
+
+	// モードチェンジ時用のタイムライン
+	FTimeline* ModeChangeTl;
 
 	// モードチェンジを縛っている数
 	// 0ならチェンジ可

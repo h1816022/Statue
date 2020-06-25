@@ -6,6 +6,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "../Cameras/MyCameraShake.h"
 #include "GameFramework/PhysicsVolume.h"
+#include "Components/TimelineComponent.h"
+#include "UObject/ConstructorHelpers.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -28,6 +30,23 @@ APlayerCharacter::APlayerCharacter()
 	NowModeType = EPlayerModeType::Human;
 	DesiredGait = EGait::Running;
 	bCanChangeMode = true;
+
+
+	// モードチェンジ用タイムライン
+	ModeChangeTl = new FTimeline();
+	ModeChangeTl->SetTimelineLength(1.0f);
+
+	const ConstructorHelpers::FObjectFinder<UCurveFloat> StepCurve(TEXT("/Game/_Users/Players/Data/Curve_ChangeMode_Float"));
+
+	// タイムライン更新時に呼ばれる関数
+	FOnTimelineFloat ModeChangeStep;
+	ModeChangeStep.BindUFunction(this, "UpdateBodyMaterial");
+	ModeChangeTl->AddInterpFloat(StepCurve.Object, ModeChangeStep);
+
+	// タイムライン終了時に呼ばれる関数
+	FOnTimelineEvent ModeChangeFinished;
+	ModeChangeFinished.BindUFunction(this, "Finished");
+	ModeChangeTl->SetTimelineFinishedFunc(ModeChangeFinished);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -81,6 +100,11 @@ void APlayerCharacter::SetCanChangeMode(bool NewFlag)
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (ModeChangeTl != nullptr && ModeChangeTl->IsPlaying())
+	{
+		ModeChangeTl->TickTimeline(DeltaTime);
+	}
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -103,6 +127,35 @@ void APlayerCharacter::PlayCameraShake(ECameraShakeType Type)
 {
 	auto controller = UGameplayStatics::GetPlayerController(this, 0);
 	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayCameraShake(ShakeData[Type], 1.0F);
+}
+
+void APlayerCharacter::ChangePlayerMode(EPlayerModeType NewMode, bool bIsCertainlyChange)
+{
+	if (NewMode == NowModeType)
+	{
+		return;
+	}
+
+	if (bCanChangeMode)
+	{
+		SetCanChangeMode(false);
+
+		switch (NowModeType)
+		{
+		case EPlayerModeType::Human:
+			NowModeType = EPlayerModeType::Statue;
+			ModeChangeTl->PlayFromStart();
+			break;
+
+		case EPlayerModeType::Statue:
+			NowModeType = EPlayerModeType::Human;
+			ModeChangeTl->ReverseFromEnd();
+			break;
+
+		default:
+			break;
+		}
+	}
 }
 
 void APlayerCharacter::MoveForward(float Value)
@@ -138,4 +191,15 @@ void APlayerCharacter::StartSprint()
 void APlayerCharacter::EndSprint()
 {
 	DesiredGait = EGait::Running;
+}
+
+void APlayerCharacter::UpdateBodyMaterial(float Value)
+{
+	FName ParamName = "DissolveRate";
+	BodyMaterial->SetScalarParameterValue(ParamName, Value);
+}
+
+void APlayerCharacter::Finished()
+{
+	SetCanChangeMode(true);
 }

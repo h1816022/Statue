@@ -32,18 +32,15 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlayerMovementInput(bool bIsForwardAxis);
 
-	// ダッシュボタンを押し始めた時の処理
+	// ダッシュ
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartSprintHold();
-
-	// 押していたダッシュボタンを離したときの処理
 	UFUNCTION(BlueprintImplementableEvent)
 	void EndSprintHold();
 
-	// しゃがみ/立ちの切り替え
+	// しゃがみ
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartStance();
-
 	UFUNCTION(BlueprintImplementableEvent)
 	void EndStance();
 
@@ -55,8 +52,13 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void JumpEnd();
 
+	// チェンジしていいかの記録を更新
 	UFUNCTION(BlueprintCallable)
 	void SetCanChangeMode(bool NewFlag);
+
+	// 指定時間動けないようにする
+	UFUNCTION(BlueprintCallable)
+	void StopMove(float ReturnDelay);
 
 	// 現在のプレイヤーのモード
 	UPROPERTY(BlueprintReadWrite)
@@ -77,6 +79,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	UMaterialInstanceDynamic* BodyMaterial;
 
+	UPROPERTY(BlueprintReadOnly)
+	bool bCanMove;
+
 public:
 	virtual void Tick(float DeltaTime) override;
 
@@ -84,12 +89,12 @@ public:
 
 	// タイプごとのカメラ振動を再生
 	UFUNCTION(BlueprintCallable)
-	void PlayCameraShake(ECameraShakeType Type);
+	void PlayCameraShake(const ECameraShakeType& Type);
 
 	// プレイヤーのモードを変更
 	// CertainlyChangeで、変更中でも変更を待機させのちに遂行させる
 	UFUNCTION(BlueprintCallable)
-	void ChangePlayerMode(EPlayerModeType NewMode, bool bIsCertainlyChange);
+	void ChangePlayerMode(const EPlayerModeType& NewMode, bool bIsCertainlyChange);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float BaseTurnRate;
@@ -125,6 +130,9 @@ private:
 
 	UFUNCTION()
 	void Finished();
+
+	UFUNCTION()
+	void StartMove();
 
 	// モードチェンジ時用のタイムライン
 	FTimeline* ModeChangeTl;

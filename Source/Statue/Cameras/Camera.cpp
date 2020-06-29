@@ -59,10 +59,10 @@ UCameraComponent* ACamera::GetCameraComponent()const
 	return Camera;
 }
 
-void ACamera::ChangeBlar(bool bIsOn)
+void ACamera::ChangeBlar(const bool bIsOn)
 {
-	FName Name = "IsApply";
-	FlightBlurMat->SetScalarParameterValue(Name, (bIsOn ? 1.0f : 0.0f));
+	const FName ParamName = "IsApply";
+	FlightBlurMat->SetScalarParameterValue(ParamName, (bIsOn ? 1.0f : 0.0f));
 }
 
 void ACamera::UpdateTransform_Implementation()

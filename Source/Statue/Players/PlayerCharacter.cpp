@@ -9,9 +9,15 @@
 #include "Components/TimelineComponent.h"
 #include "UObject/ConstructorHelpers.h"
 
+// 流体摩擦力(空中制動に関わる)
+constexpr float DEF_FLUID_FRICTION = 2.0f;			// 基本値
+constexpr float CANT_MOVE_FLUID_FRICTION = 0.0f;	// 自由に動けないとき
+
 APlayerCharacter::APlayerCharacter()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
+
+	bCanMove = true;
 
 	BaseTurnRate = 45.0f;
 	BaseLookUpRate = 45.0f;
@@ -39,7 +45,7 @@ APlayerCharacter::APlayerCharacter()
 	const ConstructorHelpers::FObjectFinder<UCurveFloat> StepCurve(TEXT("/Game/_Users/Players/Data/Curve_ChangeMode_Float"));
 
 	// タイムライン更新時に呼ばれる関数
-	FOnTimelineFloat ModeChangeStep;
+	FOnTimelineFloat ModeChangeStep;;
 	ModeChangeStep.BindUFunction(this, "UpdateBodyMaterial");
 	ModeChangeTl->AddInterpFloat(StepCurve.Object, ModeChangeStep);
 
@@ -57,8 +63,8 @@ void APlayerCharacter::BeginPlay()
 
 
 	// カメラ生成
-	FString Path = "/Game/_Users/Cameras/Blueprints/BP_Camera.BP_Camera_C";
-	TSubclassOf<class ACamera> Sc = TSoftClassPtr<ACamera>(FSoftObjectPath(*Path)).LoadSynchronous();
+	const FString Path = "/Game/_Users/Cameras/Blueprints/BP_Camera.BP_Camera_C";
+	const TSubclassOf<class ACamera> Sc = TSoftClassPtr<ACamera>(FSoftObjectPath(*Path)).LoadSynchronous();
 
 	if (Sc != nullptr)
 	{
@@ -76,10 +82,10 @@ void APlayerCharacter::BeginPlay()
 
 	auto Cm = GetCharacterMovement();
 	Cm->GroundFriction = 100.0f;
-	Cm->GetPhysicsVolume()->FluidFriction = 0.0f;
+	Cm->GetPhysicsVolume()->FluidFriction = DEF_FLUID_FRICTION;
 }
 
-void APlayerCharacter::SetCanChangeMode(bool NewFlag)
+void APlayerCharacter::SetCanChangeMode(const bool NewFlag)
 {
 	if (NewFlag)
 	{
@@ -95,6 +101,25 @@ void APlayerCharacter::SetCanChangeMode(bool NewFlag)
 		DontChangeCount++;
 		bCanChangeMode = false;
 	}
+}
+
+void APlayerCharacter::StopMove(const float ReturnDelay)
+{
+	bCanMove = false;
+
+	auto Cm = GetCharacterMovement();
+	Cm->GetPhysicsVolume()->FluidFriction = CANT_MOVE_FLUID_FRICTION;
+
+	FTimerHandle Handle;
+	GetWorldTimerManager().SetTimer(Handle, this, &APlayerCharacter::StartMove, ReturnDelay, false);
+}
+
+void APlayerCharacter::StartMove()
+{
+	bCanMove = true;
+
+	auto Cm = GetCharacterMovement();
+	Cm->GetPhysicsVolume()->FluidFriction = DEF_FLUID_FRICTION;
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -123,13 +148,13 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction(TEXT("Stance"), EInputEvent::IE_Released, this, &APlayerCharacter::EndStance);
 }
 
-void APlayerCharacter::PlayCameraShake(ECameraShakeType Type)
+void APlayerCharacter::PlayCameraShake(const ECameraShakeType& Type)
 {
 	auto controller = UGameplayStatics::GetPlayerController(this, 0);
-	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayCameraShake(ShakeData[Type], 1.0F);
+	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayCameraShake(ShakeData[Type], 1.0f);
 }
 
-void APlayerCharacter::ChangePlayerMode(EPlayerModeType NewMode, bool bIsCertainlyChange)
+void APlayerCharacter::ChangePlayerMode(const EPlayerModeType& NewMode, const bool bIsCertainlyChange)
 {
 	if (NewMode == NowModeType)
 	{
@@ -158,18 +183,33 @@ void APlayerCharacter::ChangePlayerMode(EPlayerModeType NewMode, bool bIsCertain
 	}
 }
 
-void APlayerCharacter::MoveForward(float Value)
+void APlayerCharacter::MoveForward(const float Value)
 {
+	if (!bCanMove)
+	{
+		return;
+	}
+
 	PlayerMovementInput(true);
 }
 
-void APlayerCharacter::MoveRight(float Value)
+void APlayerCharacter::MoveRight(const float Value)
 {
+	if (!bCanMove)
+	{
+		return;
+	}
+
 	PlayerMovementInput(false);
 }
 
 void APlayerCharacter::ChangeWalkMode()
 {
+	if (!bCanMove)
+	{
+		return;
+	}
+
 	switch (DesiredGait)
 	{
 	case EGait::Walking:
@@ -185,6 +225,11 @@ void APlayerCharacter::ChangeWalkMode()
 
 void APlayerCharacter::StartSprint()
 {
+	if (!bCanMove)
+	{
+		return;
+	}
+
 	DesiredGait = EGait::Sprinting;
 }
 
@@ -193,9 +238,9 @@ void APlayerCharacter::EndSprint()
 	DesiredGait = EGait::Running;
 }
 
-void APlayerCharacter::UpdateBodyMaterial(float Value)
+void APlayerCharacter::UpdateBodyMaterial(const float Value)
 {
-	FName ParamName = "DissolveRate";
+	const FName ParamName = "DissolveRate";
 	BodyMaterial->SetScalarParameterValue(ParamName, Value);
 }
 

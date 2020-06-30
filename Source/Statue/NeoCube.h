@@ -1,10 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "NeoCube.generated.h"
+
+class USphereComponent;
 
 UCLASS()
 class STATUE_API ANeoCube : public AActor
@@ -12,11 +12,9 @@ class STATUE_API ANeoCube : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
 	ANeoCube();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	UPROPERTY(BlueprintReadWrite)
@@ -29,7 +27,6 @@ protected:
 	float MaxOffset = 100.0f;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable)
@@ -37,6 +34,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetIsMoving(bool nowFlag);
+
+	UFUNCTION(BlueprintCallable)
+	void Moving(const FVector& Center, const float Size);
 
 	UPROPERTY(VisibleDefaultsOnly)
 	UStaticMeshComponent* Mesh;

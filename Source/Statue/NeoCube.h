@@ -36,7 +36,7 @@ public:
 	void SetIsMoving(bool nowFlag);
 
 	UFUNCTION(BlueprintCallable)
-	void Moving(const FVector& Center, const float Size);
+	void Moving(/*const FVector& Center, const float Size*/float Rate);
 
 	UPROPERTY(VisibleDefaultsOnly)
 	UStaticMeshComponent* Mesh;

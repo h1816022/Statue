@@ -42,24 +42,11 @@ void ANeoCube::SetIsMoving(bool newFlag)
 
 void ANeoCube::Moving(/*const FVector& Center, const float Size*/float Rate)
 {
-	// Œ»İ‚ÌˆÚ“®—Ê
-	float NowOffset;
-
-	//// •Ï‰»—¦
-	//float Rate;
-
-	//float Distance = Math::Vector_Distance(DefLocation, Center);
-	//Rate = FMath::Clamp(WaveThickness / Math::Abs(Size - Distance), 0.0f, 1.0f);
-
-	if (Rate < 0.3f)
-	{
-		Rate = 0.0f;
-	}
-
 	if (bIsMoving)
 	{
-		NowOffset = MaxOffset * Rate;
-
+		// Œ»İ‚ÌˆÚ“®—Ê
+		float NowOffset = MaxOffset * Rate;
+		
 		SetActorLocation(FMath::Lerp(GetActorLocation(), (DefLocation + FVector(0.0f, 0.0f, NowOffset)), 0.2f));
 		SetActorRotation(FMath::Lerp(DefRotation, RandomRot,  Rate));
 	}

@@ -26,6 +26,14 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float MaxOffset = 100.0f;
 
+	// ‰Šú’l‚ğ•Û‘¶
+
+	UPROPERTY(BlueprintReadOnly)
+	FVector DefLocation;
+
+	UPROPERTY(BlueprintReadOnly)
+	FRotator DefRotation;
+
 public:	
 	virtual void Tick(float DeltaTime) override;
 
@@ -41,13 +49,9 @@ public:
 	UPROPERTY(VisibleDefaultsOnly)
 	UStaticMeshComponent* Mesh;
 
-	// ‰Šú’l‚ğ•Û‘¶
-	FVector DefLocation;
-	FRotator DefRotation;
+private:
+	bool bIsMoving;
 
 	// Œ‚è‚ ‚ª‚é‚Ì‰ñ“]Šp“x
 	FRotator RandomRot;
-
-private:
-	bool bIsMoving;
 };

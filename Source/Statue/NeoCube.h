@@ -10,48 +10,44 @@ UCLASS()
 class STATUE_API ANeoCube : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	ANeoCube();
 
 protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(BlueprintReadWrite)
-	float MaxDistance = 600.0f;
+		float MaxDistance = 600.0f;
 
 	UPROPERTY(EditDefaultsOnly)
-	float WaveThickness = 100.0f;
+		float WaveThickness = 100.0f;
 
 	UPROPERTY(EditDefaultsOnly)
-	float MaxOffset = 100.0f;
+		float MaxOffset = 100.0f;
 
-	// èâä˙ílÇï€ë∂
-
-	UPROPERTY(BlueprintReadOnly)
-	FVector DefLocation;
-
-	UPROPERTY(BlueprintReadOnly)
-	FRotator DefRotation;
-
-public:	
+public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable)
-	const bool GetIsMoving()const;
+		const bool GetIsMoving()const;
 
 	UFUNCTION(BlueprintCallable)
-	void SetIsMoving(bool nowFlag);
+		void SetIsMoving(bool nowFlag);
 
 	UFUNCTION(BlueprintCallable)
-	void Moving(/*const FVector& Center, const float Size*/float Rate);
+		void Moving(const FVector& Center, const float Size);
 
 	UPROPERTY(VisibleDefaultsOnly)
-	UStaticMeshComponent* Mesh;
+		UStaticMeshComponent* Mesh;
 
-private:
-	bool bIsMoving;
+	// èâä˙ílÇï€ë∂
+	FVector DefLocation;
+	FRotator DefRotation;
 
 	// åûÇËÇ†Ç™ÇÈéûÇÃâÒì]äpìx
 	FRotator RandomRot;
+
+private:
+	bool bIsMoving;
 };

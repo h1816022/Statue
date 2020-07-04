@@ -20,7 +20,7 @@ ANeoCube::ANeoCube()
 void ANeoCube::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	DefLocation = GetActorLocation();
 	DefRotation = GetActorRotation();
 }
@@ -40,15 +40,28 @@ void ANeoCube::SetIsMoving(bool newFlag)
 	bIsMoving = newFlag;
 }
 
-void ANeoCube::Moving(/*const FVector& Center, const float Size*/float Rate)
+void ANeoCube::Moving(const FVector& Center, const float Size)
 {
+	// åªç›ÇÃà⁄ìÆó 
+	float NowOffset;
+
+	// ïœâªó¶
+	float Rate;
+
+	float Distance = Math::Vector_Distance(DefLocation, Center);
+	Rate = FMath::Clamp(WaveThickness / Math::Abs(Size - Distance), 0.0f, 1.0f);
+
+	if (Rate < 0.3f)
+	{
+		Rate = 0.0f;
+	}
+
 	if (bIsMoving)
 	{
-		// åªç›ÇÃà⁄ìÆó 
-		float NowOffset = MaxOffset * Rate;
-		
+		NowOffset = MaxOffset * Rate;
+
 		SetActorLocation(FMath::Lerp(GetActorLocation(), (DefLocation + FVector(0.0f, 0.0f, NowOffset)), 0.2f));
-		SetActorRotation(FMath::Lerp(DefRotation, RandomRot,  Rate));
+		SetActorRotation(FMath::Lerp(DefRotation, RandomRot, Rate));
 	}
 	else
 	{

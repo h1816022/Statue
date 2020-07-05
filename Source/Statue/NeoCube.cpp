@@ -40,16 +40,36 @@ void ANeoCube::SetIsMoving(bool newFlag)
 	bIsMoving = newFlag;
 }
 
-void ANeoCube::Moving(const FVector& Center, const float Size)
+void ANeoCube::StartMove(USphereComponent* newForce)
 {
+	if (Force)
+	{
+		return;
+	}
+
+	Force = newForce;
+}
+
+void ANeoCube::Moving()
+{
+	if (!bIsMoving)
+	{
+		return;
+	}
+
+	if (!Force)
+	{
+		return;
+	}
+
 	// Œ»Ý‚ÌˆÚ“®—Ê
 	float NowOffset;
 
 	// •Ï‰»—¦
 	float Rate;
 
-	float Distance = Math::Vector_Distance(DefLocation, Center);
-	Rate = FMath::Clamp(WaveThickness / Math::Abs(Size - Distance), 0.0f, 1.0f);
+	float Distance = Math::Vector_Distance(DefLocation, Force->GetComponentLocation());
+	Rate = FMath::Clamp(WaveThickness / Math::Abs(Force->GetScaledSphereRadius() - Distance), 0.0f, 1.0f);
 
 	if (Rate < 0.3f)
 	{

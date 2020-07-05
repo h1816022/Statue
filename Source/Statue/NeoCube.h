@@ -18,28 +18,31 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(BlueprintReadWrite)
-		float MaxDistance = 600.0f;
+	float MaxDistance = 600.0f;
 
 	UPROPERTY(EditDefaultsOnly)
-		float WaveThickness = 100.0f;
+	float WaveThickness = 100.0f;
 
 	UPROPERTY(EditDefaultsOnly)
-		float MaxOffset = 100.0f;
+	float MaxOffset = 100.0f;
 
 public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable)
-		const bool GetIsMoving()const;
+	const bool GetIsMoving()const;
 
 	UFUNCTION(BlueprintCallable)
-		void SetIsMoving(bool nowFlag);
+	void SetIsMoving(bool nowFlag);
 
 	UFUNCTION(BlueprintCallable)
-		void Moving(const FVector& Center, const float Size);
+	void StartMove(USphereComponent* newForce);
+
+	UFUNCTION(BlueprintCallable)
+	void Moving();
 
 	UPROPERTY(VisibleDefaultsOnly)
-		UStaticMeshComponent* Mesh;
+	UStaticMeshComponent* Mesh;
 
 	// èâä˙ílÇï€ë∂
 	FVector DefLocation;
@@ -49,5 +52,7 @@ public:
 	FRotator RandomRot;
 
 private:
+	USphereComponent* Force = nullptr;
+
 	bool bIsMoving;
 };

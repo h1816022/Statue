@@ -54,11 +54,6 @@ void ACamera::Init(APlayerCharacter* inPlayer)
 	Player = inPlayer;
 }
 
-UCameraComponent* ACamera::GetCameraComponent()const
-{
-	return Camera;
-}
-
 void ACamera::ChangeBlar(const bool bIsOn)
 {
 	const FName ParamName = "IsApply";
@@ -70,7 +65,5 @@ void ACamera::UpdateTransform_Implementation()
 	FVector MyLocation = GetActorLocation();
 	FVector PlayerLocation = Player->GetActorLocation();
 
-	SetActorLocation(FMath::Lerp(MyLocation, PlayerLocation, LagSpeed));
+	SetActorLocation(FMath::Lerp(MyLocation, PlayerLocation + CameraLocationOffset, LagSpeed));
 }
-
-

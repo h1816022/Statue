@@ -26,16 +26,22 @@ protected:
 	void UpdateTransform();
 	void UpdateTransform_Implementation();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UCameraComponent* Camera;
+
 	UPROPERTY(BlueprintReadWrite)
 	APlayerCharacter* Player;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FVector FlyingOffset;
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector CameraLocationOffset = { 0.0f, 0.0f, 0.0f };
 
 public:	
 	virtual void Tick(float DeltaTime) override;
 
 	void Init(APlayerCharacter* inPlayer);
-
-	UFUNCTION(BlueprintPure)
-	UCameraComponent* GetCameraComponent()const;
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeBlar(bool bIsOn);
@@ -47,10 +53,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* CameraArm;
 
-	UPROPERTY(VisibleAnywhere)
-	UCameraComponent* Camera;
-
-	// ÉJÉÅÉâÇ™í«Ç¢Ç©ÇØÇÈë¨Ç≥1
+	// ÉJÉÅÉâÇ™í«Ç¢Ç©ÇØÇÈë¨Ç≥
 	UPROPERTY(EditAnywhere)
 	float LagSpeed = 0.1f;
 

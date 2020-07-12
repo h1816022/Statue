@@ -14,6 +14,8 @@ enum class ECameraShakeType : uint8
 	Landhing
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FChangeMode, EPlayerModeType, NewType);
+
 class ACamera;
 struct FTimeline;
 
@@ -140,4 +142,7 @@ private:
 	// モードチェンジを縛っている数
 	// 0ならチェンジ可
 	uint8 DontChangeCount = 0;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FChangeMode ChangeMode;
 };

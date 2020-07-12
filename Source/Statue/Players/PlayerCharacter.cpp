@@ -169,7 +169,7 @@ void APlayerCharacter::ChangePlayerMode(const EPlayerModeType& NewMode, const bo
 		{
 		case EPlayerModeType::Human:
 			NowModeType = EPlayerModeType::Statue;
-			ModeChangeTl->PlayFromStart();
+			ModeChangeTl->PlayFromStart(); 
 			break;
 
 		case EPlayerModeType::Statue:
@@ -180,6 +180,8 @@ void APlayerCharacter::ChangePlayerMode(const EPlayerModeType& NewMode, const bo
 		default:
 			break;
 		}
+
+		ChangeMode.Broadcast(NowModeType);
 	}
 }
 
